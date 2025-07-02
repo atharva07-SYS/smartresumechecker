@@ -182,9 +182,14 @@ def extract_resume_text(path):
     if ext == '.pdf':
         import pdfplumber
         text = ''
-        with pdfplumber.open(path) as pdf:
-            for page in pdf.pages:
-                text += page.extract_text() or ''
+        try:
+            with pdfplumber.open(path) as pdf:
+                for page in pdf.pages:
+                    text += page.extract_text() or ''
+        except Exception as e:
+            # Log the error and return a user-friendly message
+            print(f"PDF extraction error: {e}")
+            return "[Error: Could not extract text from PDF. The file may be corrupted or invalid.]"
         return text
     elif ext == '.docx':
         from docx import Document
