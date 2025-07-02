@@ -12,6 +12,15 @@ print('CWD:', os.getcwd())
 print('NLTK_DATA_PATH:', NLTK_DATA_PATH)
 print('NLTK_DATA_PATH exists:', os.path.exists(NLTK_DATA_PATH))
 print('NLTK data path list:', nltk.data.path)
+import glob
+print('nltk_data contents:', os.listdir(NLTK_DATA_PATH))
+punkt_dir = os.path.join(NLTK_DATA_PATH, 'tokenizers', 'punkt')
+if os.path.exists(punkt_dir):
+    print('punkt contents:', os.listdir(punkt_dir))
+else:
+    print('punkt directory does not exist!')
+print('All punkt files:', glob.glob(os.path.join(NLTK_DATA_PATH, 'tokenizers', 'punkt', '*')))
+print('All punkt PY3 files:', glob.glob(os.path.join(NLTK_DATA_PATH, 'tokenizers', 'punkt', 'PY3', '*')))
 
 def create_app():
     app = Flask(__name__)
