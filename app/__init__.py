@@ -1,13 +1,17 @@
 
-from flask import Flask
+
 import os
 import nltk
-nltk_data_dir = '/tmp/nltk_data'
-os.makedirs(nltk_data_dir, exist_ok=True)
-nltk.data.path.clear()
-nltk.data.path.append(nltk_data_dir)
-nltk.download('punkt', download_dir=nltk_data_dir, force=True)
-nltk.download('stopwords', download_dir=nltk_data_dir, force=True)
+from flask import Flask
+
+# Set NLTK data path to project-local nltk_data directory
+NLTK_DATA_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'nltk_data'))
+if NLTK_DATA_PATH not in nltk.data.path:
+    nltk.data.path.insert(0, NLTK_DATA_PATH)
+print('CWD:', os.getcwd())
+print('NLTK_DATA_PATH:', NLTK_DATA_PATH)
+print('NLTK_DATA_PATH exists:', os.path.exists(NLTK_DATA_PATH))
+print('NLTK data path list:', nltk.data.path)
 
 def create_app():
     app = Flask(__name__)
