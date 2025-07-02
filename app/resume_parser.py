@@ -1,10 +1,10 @@
+nltk.download('punkt')
+nltk.download('stopwords')
+
 import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import nltk
 
-nltk.download('punkt')
-nltk.download('stopwords')
 
 def extract_skills(text):
     stop_words = set(stopwords.words('english'))
