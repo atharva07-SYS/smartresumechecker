@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  {% if jd_suggestions %}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-info shadow-sm mb-4">
+        <div class="card-header bg-info text-white"><b><i class="bi bi-lightbulb"></i> Job Description Suggestions</b></div>
+        <div class="card-body">
+          <p>Based on your resume, you may be a good fit for these roles:</p>
+          <div class="row">
+            {% for jd in jd_suggestions %}
+            <div class="col-md-4 mb-3">
+              <div class="card h-100 border-primary">
+                <div class="card-body">
+                  <h5 class="card-title">{{ jd.title }}</h5>
+                  <p class="card-text">{{ jd.description }}</p>
+                  <span class="badge bg-primary">Required Skills:</span>
+                  <ul>{% for skill in jd.skills %}<li>{{ skill }}</li>{% endfor %}</ul>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="mb-3"><i class="bi bi-bar-chart-steps"></i> Resume vs Job Description Skill Match</h2>
+          <div class="mb-3">
+            <b>Match Score:</b>
+            <div class="progress" style="height: 30px;">
+              <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ match_score }}%; font-size:1.2em;" aria-valuenow="{{ match_score }}" aria-valuemin="0" aria-valuemax="100">{{ match_score }}%</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <b>Matched Technical Skills:</b> {{ matched|join(', ') if matched else '<i>None</i>'|safe }}
+          </div>
+          <a href="/uploads/{{ report_filename }}" class="btn btn-outline-primary btn-sm mb-3" download>Download TXT Report</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header bg-light"><b><i class="bi bi-person-badge"></i> Extracted Resume Technical Skills</b></div>
+        <div class="card-body"><ul>{% for item in resume_skills['Technical Skills'] %}<li>{{ item }}</li>{% endfor %}</ul></div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header bg-light"><b><i class="bi bi-briefcase"></i> Extracted JD Technical Skills</b></div>
+        <div class="card-body"><ul>{% for item in jd_skills['Technical Skills'] %}<li>{{ item }}</li>{% endfor %}</ul></div>
+      </div>
+    </div>
+  </div>
+  <div class="card p-3 mb-4">
+    <h4><i class="bi bi-list-check"></i> All Extracted Resume Skills</h4>
+    <div class="row">
+      <div class="col-md-3"><b>Technical Skills</b><ul>{% for item in resume_skills['Technical Skills'] %}<li>{{ item }}</li>{% endfor %}</ul></div>
+      <div class="col-md-3"><b>Spoken Languages</b><ul>{% for item in resume_skills['Spoken Languages'] %}<li>{{ item }}</li>{% endfor %}</ul></div>
+      <div class="col-md-3"><b>Applications/Tools</b><ul>{% for item in resume_skills['Applications/Tools'] %}<li>{{ item }}</li>{% endfor %}</ul></div>
+      <div class="col-md-3"><b>Hobbies</b><ul>{% for item in resume_skills['Hobbies'] %}<li>{{ item }}</li>{% endfor %}</ul></div>
+    </div>
+  </div>
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white"><b><i class="bi bi-pie-chart"></i> Analytics & Charts</b></div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <h6>Technical Skills Overlap</h6>
+              <canvas id="overlapChart"></canvas>
+            </div>
+            <div class="col-md-6 mb-4">
+              <h6>Resume Skill Categories</h6>
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Pie chart for skill overlap
+  const overlapData = {
+    labels: ['Matched', 'Resume Only', 'JD Only'],
+    datasets: [{
+      data: [
+        {{ matched|length }},
+        {{ resume_skills['Technical Skills']|length - matched|length }},
+        {{ jd_skills['Technical Skills']|length - matched|length }}
+      ],
+      backgroundColor: ['#198754', '#0d6efd', '#ffc107']
+    }]
+  };
+  new Chart(document.getElementById('overlapChart'), {
+    type: 'pie',
+    data: overlapData,
+    options: {responsive: true, plugins: {legend: {position: 'bottom'}}}
+  });
+  // Doughnut chart for skill categories
+  const categoryData = {
+    labels: ['Technical', 'Languages', 'Applications', 'Hobbies'],
+    datasets: [{
+      data: [
+        {{ resume_skills['Technical Skills']|length }},
+        {{ resume_skills['Spoken Languages']|length }},
+        {{ resume_skills['Applications/Tools']|length }},
+        {{ resume_skills['Hobbies']|length }}
+      ],
+      backgroundColor: ['#0d6efd', '#6610f2', '#fd7e14', '#20c997']
+    }]
+  };
+  new Chart(document.getElementById('categoryChart'), {
+    type: 'doughnut',
+    data: categoryData,
+    options: {responsive: true, plugins: {legend: {position: 'bottom'}}}
+  });
+</script>
+{% endblock %}

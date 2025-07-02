@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <div class="card mb-4">
+    <div class="card-header bg-dark text-white"><b><i class="bi bi-shield-lock"></i> Admin Dashboard</b></div>
+    <div class="card-body">
+      <h5 class="mb-3">Recent Resume Matches</h5>
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th>Timestamp</th>
+              <th>Resume Filename</th>
+              <th>Match Score</th>
+              <th>Matched Skills</th>
+              <th>Download Log</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for log in logs %}
+            <tr>
+              <td>{{ log.timestamp }}</td>
+              <td>{{ log.resume_filename }}</td>
+              <td>{{ log.match_score }}%</td>
+              <td>{{ log.matched_skills|join(', ') }}</td>
+              <td><a href="/uploads/{{ log.log_file }}" class="btn btn-sm btn-outline-primary" download>Download</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if not logs %}
+      <div class="alert alert-info mt-3">No logs found.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
