@@ -1,6 +1,11 @@
-from flask import Flask
 
+from flask import Flask
 import os
+import nltk
+
+# Download required NLTK data if not already present
+nltk.download('punkt')
+nltk.download('stopwords')
 
 def create_app():
     app = Flask(__name__)
