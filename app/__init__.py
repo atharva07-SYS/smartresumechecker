@@ -2,10 +2,9 @@
 from flask import Flask
 import os
 import nltk
-
-# Download required NLTK data if not already present
-nltk.download('punkt')
-nltk.download('stopwords')
+nltk.data.path.append('/opt/render/nltk_data')
+nltk.download('punkt', download_dir='/opt/render/nltk_data')
+nltk.download('stopwords', download_dir='/opt/render/nltk_data')
 
 def create_app():
     app = Flask(__name__)
